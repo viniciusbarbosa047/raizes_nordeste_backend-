@@ -1,0 +1,14 @@
+# Ignorar o ambiente virtual (são milhares de arquivos inúteis pro git)
+.venv/
+venv/
+__pycache__/
+
+# Ignorar o banco de dados (ele é gerado pelo código)
+*.db
+*.sqlite3
+
+# Ignorar arquivos de sistema do Mac
+.DS_Store
+
+# Ignorar arquivos de configuração sensíveis (se tiver)
+.env
