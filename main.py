@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from src.api.endpoints import unidades, produtos, pedidos, pagamentos # <--- AQUI
+from src.api.endpoints import auth, unidades, produtos, pedidos, pagamentos, usuarios
 from src.infrastructure.banco_de_dados import engine
 from src.domain.modelos import Base
 
@@ -16,7 +16,9 @@ app = FastAPI(
 app.include_router(unidades.router, prefix="/unidades", tags=["Unidades"])
 app.include_router(produtos.router, prefix="/produtos", tags=["Produtos"])
 app.include_router(pedidos.router, prefix="/pedidos", tags=["Pedidos"])
-app.include_router(pagamentos.router, prefix="/pagamentos", tags=["Pagamentos"]) # <--- E AQUI
+app.include_router(pagamentos.router, prefix="/pagamentos", tags=["Pagamentos"])
+app.include_router(usuarios.router, prefix="/usuarios", tags=["Usuarios"])
+app.include_router(auth.router, prefix="/auth", tags=["Autenticacao (Login)"])
 
 @app.get("/")
 def raiz():

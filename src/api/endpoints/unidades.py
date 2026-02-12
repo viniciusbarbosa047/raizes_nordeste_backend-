@@ -1,39 +1,38 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
+from sqlalchemy.exc import IntegrityError
 from src.infrastructure.banco_de_dados import get_db
-from src.domain.modelos import Unidade
+from src.domain.modelos import Unidade, Usuario
 from src.domain.schemas import UnidadeCriar, UnidadeLer
-
-# Criando o roteador para as URLs de unidades
+from src.api.deps import obter_usuario_logado 
 router = APIRouter()
 
-# POST /unidades/ - Cria uma nova loja
-@router.post("/", response_model=UnidadeLer)
-def criar_nova_unidade(unidade: UnidadeCriar, db: Session = Depends(get_db)):
-    print(f"Tentando criar a unidade: {unidade.nome}") # Print pra ajudar no debug
-
-    # 1. Cria o objeto do banco (Model) usando os dados que vieram (Schema)
-    nova_loja = Unidade(
-        nome=unidade.nome,
-        tem_cozinha=unidade.tem_cozinha
-    )
-
-    # 2. Adiciona no banco de dados
-    db.add(nova_loja)
+# ROTA PROTEGIDA 🔒
+# Note o novo argumento: usuario_atual: Usuario = Depends(obter_usuario_logado)
+# Isso obriga a ter token pra entrar aqui.
+@router.post("/", response_model=UnidadeLer, status_code=status.HTTP_201_CREATED)
+def criar_nova_unidade(
+    unidade: UnidadeCriar, 
+    db: Session = Depends(get_db),
+    usuario_atual: Usuario = Depends(obter_usuario_logado) 
+):
+    print(f"Usuario autorizado: {usuario_atual.nome} está criando uma loja.")
     
-    # 3. Salva de verdade (Commit)
-    db.commit()
-    
-    # 4. Atualiza o objeto com o ID que foi gerado
-    db.refresh(nova_loja)
-    
-    print("Unidade salva com sucesso!")
-    return nova_loja
+    unidade_existente = db.query(Unidade).filter(Unidade.nome == unidade.nome).first()
+    if unidade_existente:
+        raise HTTPException(status_code=409, detail="Unidade já existe.")
 
-# GET /unidades/ - Lista todas as lojas
+    try:
+        nova_loja = Unidade(nome=unidade.nome, tem_cozinha=unidade.tem_cozinha)
+        db.add(nova_loja)
+        db.commit()
+        db.refresh(nova_loja)
+        return nova_loja
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=500, detail="Erro interno.")
+
+# ROTA PÚBLICA 🔓 (Qualquer um vê)
 @router.get("/", response_model=list[UnidadeLer])
 def listar_unidades(db: Session = Depends(get_db)):
-    # Busca tudo na tabela de unidades
-    lista_de_lojas = db.query(Unidade).all()
-    
-    return lista_de_lojas
+    return db.query(Unidade).all()

@@ -46,7 +46,7 @@ class Pedido(Base):
     valor_total = Column(Float, default=0.0)
     
     # Chaves Estrangeiras (Quem pediu? Onde?)
-    usuario_id = Column(Integer, ForeignKey("usuarios.id"), nullable=True) # Pode ser nulo por enquanto
+    usuario_id = Column(Integer, ForeignKey("usuarios.id"), nullable=True)
     unidade_id = Column(Integer, ForeignKey("unidades.id"))
     
     # Relacionamento com os itens
