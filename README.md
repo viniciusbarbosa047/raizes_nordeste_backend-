@@ -1,76 +1,56 @@
-# Projeto Backend - Raízes do Nordeste 🌵
+# 🌵 Raízes do Nordeste - API Backend
 
-> Estudo de Caso: Projeto Multidisciplinar UNINTER 2026.
-> API para gestão de lanchonetes, focada em multicanalidade e integração de pedidos.
+> Estudo de Caso: Projeto Multidisciplinar UNINTER.  
+> Desenvolvido por: **Vinicius Eugénio Barbosa (RU: 4662400)**
 
 ## 📋 Sobre o Projeto
-Este sistema é o Backend da rede "Raízes do Nordeste". Ele gerencia o fluxo crítico de vendas, desde o cardápio até a confirmação do pagamento, respeitando regras de estoque e diferenças entre unidades.
+API RESTful desenvolvida para gerenciar as operações de uma rede de franquias de comida regional. O sistema atua como o motor principal para pedidos multicanal (App, Totens de autoatendimento e Balcão), controle rigoroso de estoque e processamento (mock) de pagamentos.
 
-### 🛠 Tecnologias Utilizadas
+O foco central desta aplicação é garantir consistência nas regras de negócio e **segurança de nível comercial**, implementando criptografia de senhas e proteção de rotas via tokens JWT, em conformidade com as boas práticas de proteção de dados.
+
+## 🚀 Tecnologias e Ferramentas
 - **Linguagem:** Python 3.12
-- **Framework:** FastAPI
-- **Banco de Dados:** SQLite (Arquivo `raizes_nordeste.db`)
+- **Framework Web:** FastAPI
+- **Banco de Dados:** SQLite (Relacional)
 - **ORM:** SQLAlchemy
-- **Servidor:** Uvicorn
+- **Segurança e Criptografia:** JWT (JSON Web Tokens), bcrypt e Passlib
+- **Servidor Local:** Uvicorn
 
----
+## ⚙️ Instruções de Instalação e Execução
 
-## 🚀 Como Rodar o Projeto (Passo a Passo)
+Siga os passos abaixo para rodar o projeto localmente em ambientes Mac/Linux:
 
-### 1. Preparar o Ambiente
-Certifique-se de ter o Python instalado. No terminal, execute:
+**1. Clone o repositório e acesse a pasta:**
+git clone <URL_DO_SEU_REPOSITORIO_AQUI>
+cd raizes_nordeste_backend
 
-```bash
-# 1. Criar o ambiente virtual (para isolar as bibliotecas)
+**2. Crie e ative o ambiente virtual:**
 python3 -m venv .venv
-
-# 2. Ativar o ambiente (No Mac/Linux)
 source .venv/bin/activate
 
-# 3. Instalar as dependências
+**3. Instale as dependências exigidas:**
 pip install -r requirements.txt
 
-# 4. Executar a API
-Com o ambiente ativado, inicie o servidor:
-
-Bash
+**4. Inicie o Servidor:**
 python main.py
-O servidor iniciará em: http://127.0.0.1:8000
 
-# 5. Acessar a Documentação
-O projeto possui documentação automática e interativa (Swagger). Acesse no navegador:
+O servidor estará rodando em: http://127.0.0.1:8000
 
-Documentação: http://127.0.0.1:8000/docs
+## 📖 Documentação da API (Swagger UI)
+A documentação interativa das rotas e schemas pode ser acessada com o servidor rodando através do link:
+- **Acessar Swagger:** http://127.0.0.1:8000/docs
 
-# 6. 📦 Funcionalidades Implementadas (MVP)
-1. Gestão de Unidades 🏪
-Cadastro de Lojas: (POST /unidades) - Permite cadastrar novas filiais, definindo se possuem cozinha completa ou não.
+## 🔐 Principais Funcionalidades (Endpoints)
 
-Listagem: (GET /unidades) - Visualiza todas as unidades da rede.
+### Autenticação & Segurança
+- `POST /auth/login`: Autentica o usuário e gera o Token JWT (Bearer).
+- `POST /usuarios/`: Cadastra novos administradores (senha criptografada).
 
-2. Cardápio e Estoque 🍔
-Cadastro de Produtos: (POST /produtos) - Inclui itens no cardápio definindo preço e quantidade em estoque.
+### Gestão do Negócio (Rotas Protegidas)
+- `POST /unidades/`: Cadastro de novas franquias.
+- `POST /produtos/`: Cadastro de itens do cardápio com inserção de quantidade em estoque.
+- `POST /pedidos/`: Criação de pedidos com baixa automática de estoque.
+- `POST /pagamentos/processar`: Simulação de gateway de pagamento.
 
-Controle de Estoque: O sistema impede vendas se a quantidade solicitada for maior que a disponível.
-
-3. Pedidos (Fluxo Crítico) 📝
-Criação de Pedidos: (POST /pedidos) - Suporta múltiplos canais (APP, TOTEM).
-
-Regras de Negócio:
-
-Valida se a Unidade existe.
-
-Verifica disponibilidade de estoque item a item.
-
-Calcula o valor total do pedido automaticamente.
-
-Baixa o estoque no momento da criação.
-
-4. Pagamentos (Mock) 💳
-Simulação Bancária: (POST /pagamentos/processar) - Simula a comunicação com uma operadora de cartão.
-
-Regras de Aprovação:
-
-Cartões terminados em qualquer número (exceto 1): APROVADO (Status PAGO).
-
-Cartões terminados em 1: RECUSADO (Status CANCELADO_PAGAMENTO).
+---
+*Projeto acadêmico desenvolvido para fins de avaliação.*
