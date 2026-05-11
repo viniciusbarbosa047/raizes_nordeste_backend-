@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from src.infrastructure.banco_de_dados import get_db
 from src.domain.modelos import Produto, Usuario
 from src.domain.schemas import ProdutoCriar, ProdutoLer
-from src.api.deps import obter_usuario_logado # <--- O Guarda
+from src.api.deps import obter_usuario_logado
 
 router = APIRouter()
 
@@ -12,7 +12,7 @@ router = APIRouter()
 def criar_produto(
     produto: ProdutoCriar, 
     db: Session = Depends(get_db),
-    usuario_atual: Usuario = Depends(obter_usuario_logado) # <--- Exige Login
+    usuario_atual: Usuario = Depends(obter_usuario_logado)
 ):
     print(f"Admin {usuario_atual.nome} está cadastrando: {produto.nome}")
 
